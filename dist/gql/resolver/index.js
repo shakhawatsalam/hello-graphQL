@@ -2,14 +2,25 @@ import { db } from "../../db.js";
 export const resolvers = {
     Query: {
         products: () => db.products,
-        product: (parent, args, context) => {
-            const result = db.products.find((pd) => pd.id === args.productId);
-            return result;
+        product: (parent, { productId }, context) => {
+            return db.products.find((pd) => pd.id === productId);
         },
         categories: () => db.categories,
-        category: (parent, args, context) => {
-            const result = db.categories.find((pd) => pd.id === args.categoryId);
-            return result;
+        category: (parent, { categoryId }, context) => {
+            return db.categories.find((pd) => pd.id === categoryId);
+        },
+    },
+    Product: {
+        category: ({ categoryId }, args, context) => {
+            return db.categories.find((category) => category.id === categoryId);
+        },
+        reviews: ({ id }, args, context) => {
+            return db.reviews.filter((review) => review.productId === id);
+        },
+    },
+    Category: {
+        products: ({ id }, args, context) => {
+            return db.products.filter((product) => product.categoryId === id);
         },
     },
 };
